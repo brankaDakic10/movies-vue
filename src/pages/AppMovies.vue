@@ -24,9 +24,9 @@ data(){
 },
  beforeRouteEnter (to, from, next) {
     MoviesService.getAll()
-      .then((response) => {
+      .then(({data}) => {
         next((vm) => {
-          vm.movies = response.data
+          vm.movies = data
         })
       })
   }
