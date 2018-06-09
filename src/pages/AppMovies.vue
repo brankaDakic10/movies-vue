@@ -39,6 +39,37 @@
           >
               Select All
           </b-button>
+          <!-- dropdown with options -->
+           <b-dropdown
+            class="float-right mr-1"
+            size="sm"
+            text="Sort By"
+          >
+          <!-- by title -->
+            <b-dropdown-item
+              @click="sortBy('title', 'asc')"
+            >
+              Name ASC
+            </b-dropdown-item>
+            <b-dropdown-item
+              @click="sortBy('title', 'desc')"
+            >
+              Name DESC
+            </b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <!-- by duration-->
+            <b-dropdown-item
+              @click="sortBy('duration', 'asc')"
+            >
+              Duration ASC
+            </b-dropdown-item>
+            <b-dropdown-item
+              @click="sortBy('duration', 'desc')"
+            >
+              Duration DESC
+            </b-dropdown-item>
+</b-dropdown>
+<!-- end dropdown -->
         </div>
         <!-- end buttons div -->
 </div>
@@ -104,6 +135,13 @@ this.selectedMoviesIds = this.movies.map((movie) => movie.id);
     },
     deselectAll(){
        this.selectedMoviesIds = []; 
+    },
+    sortBy(prop, order) {
+      let orderCoefficient = order === 'asc' ? 1 : -1;
+      this.movies = this.movies.sort((movie1, movie2) => {
+        return movie1[prop] >= movie2[prop] ?
+          orderCoefficient : -orderCoefficient
+      })
     }
 },
 
@@ -113,13 +151,12 @@ this.selectedMoviesIds = this.movies.map((movie) => movie.id);
     MoviesService.getAll()
     .then(({ data }) => {
       next((context) => {
-        context.movies = data;
+        context.movies = data.map(movie =>
+          Object.assign(movie, { duration: parseFloat(movie.duration) }));
       })
     })
   }
-
 }
-
 </script>
 
 <style>
