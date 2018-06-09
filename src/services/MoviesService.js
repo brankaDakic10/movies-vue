@@ -11,8 +11,12 @@ const ENDPOINTS = {
 
 export default {
  
-  getAll() {
-    return axios.get(ENDPOINTS.MOVIES)
+  getAll(term="") {
+    return axios.get(ENDPOINTS.MOVIES, {
+      params: {
+        term
+      }
+    })
   },
   store: function (movie) {
     return axios.post(ENDPOINTS.MOVIES, movie)
