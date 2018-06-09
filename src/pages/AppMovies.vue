@@ -7,7 +7,7 @@
     />
 
      <div class="pt-3">
-      <div class="row mb-2">
+      <div class="row mb-2" v-if="movies.length">
         <div class="col-md">
           <b-badge
             pill
@@ -75,13 +75,16 @@
 </div>
 
       <movie-row
-        v-for="movie in movies"
+        v-for="movie in visibleCollectionOfMovies"
         :key="movie.id"
         :movie="movie"
         @on-selected-movie="onSelectedMovie"
          :selectedMoviesIds="selectedMoviesIds"
       />
-
+ <MoviePaginator
+ :number-of-pages="totalNumberOfPages"
+  :current-page="currentPage"
+   @selected-page="changeCurrentPage"/>
       <b-alert
         show
         variant="warning"
@@ -90,6 +93,7 @@
         No Movies
       </b-alert>
     </div>
+    
   </div>
 </template>
 
@@ -98,22 +102,36 @@
 
 import MovieRow from "./../components/MovieRow.vue"
 import MovieSearch from './../components/MovieSearch.vue'
+import MoviePaginator from './../components/MoviePaginator.vue'
 
 export default {
 name:"AppMovies",
 components:{
     MovieRow,
-    MovieSearch
+    MovieSearch,
+    MoviePaginator
 },
 data(){
     return{
         movies:[],
         selectedMoviesIds: [],
+        currentPage:1
     }
 },
 computed:{
 selectedMoviesCounter(){
      return this.selectedMoviesIds.length
+},
+//  moviePaginator
+totalNumberOfPages() {
+    return Math.ceil(this.movies.length / 5)
+},
+// show 5 movies on page moviePaginator
+visibleCollectionOfMovies() {
+ let bottomIndexLimit = (this.currentPage - 1) * 5 
+let topIndexLimit = bottomIndexLimit + 5
+ return this.movies.filter(
+     (movie, index) => index >= bottomIndexLimit && index < topIndexLimit)
 }
 },
 methods:{
@@ -123,8 +141,11 @@ methods:{
           this.movies = data
         })
     },
-      onSelectedMovie(movie) {
-      if (this.selectedMoviesIds.indexOf(movie.id) > -1) {
+    // method for select and deselect single movie-row
+      onSelectedMovie(movie, isSelected) {
+      if (!isSelected) {
+        let movieIndex = this.selectedMoviesIds.indexOf(movie.id);
+        this.selectedMoviesIds.splice(movieIndex, 1);
         return;
       }
       this.selectedMoviesIds.push(movie.id)
@@ -142,6 +163,10 @@ this.selectedMoviesIds = this.movies.map((movie) => movie.id);
         return movie1[prop] >= movie2[prop] ?
           orderCoefficient : -orderCoefficient
       })
+    },
+    // MoviePaginator method
+    changeCurrentPage(page) {
+        this.currentPage = page;
     }
 },
 
