@@ -1,7 +1,6 @@
 <template>
     <div class="container">
 
-        <movie-search @search-term-change="onSearchTermChanged" class="mt-4" />
 
         <div class="pt-3">
             <div class="row mb-2" v-if="movies.length">
@@ -60,7 +59,6 @@
     import MoviesService from './../services/MoviesService'
 
     import MovieRow from "./../components/MovieRow.vue"
-    import MovieSearch from './../components/MovieSearch.vue'
     import MoviePaginator from './../components/MoviePaginator.vue'
     import {
         mapGetters,
@@ -70,7 +68,6 @@
         name: "AppMovies",
         components: {
             MovieRow,
-            MovieSearch,
             MoviePaginator
         },
         data() {
