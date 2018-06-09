@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import AppMovies from '../pages/AppMovies'
+import AddMovie from '../pages/AddMovie'
+
 Vue.use(VueRouter)
 
 const routes = [{
@@ -13,6 +15,12 @@ const routes = [{
     path: '/movies',
     component: AppMovies,
     name: 'movies'
+    
+},
+{
+    path: '/add',
+    component: AddMovie,
+    name: 'add'
     
 }]
 
