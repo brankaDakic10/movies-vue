@@ -1,189 +1,165 @@
 <template>
-  <div class="container">
+    <div class="container">
 
-    <movie-search
-      @search-term-change="onSearchTermChanged"
-      class="mt-4"
-    />
+        <movie-search @search-term-change="onSearchTermChanged" class="mt-4" />
 
-     <div class="pt-3">
-      <div class="row mb-2" v-if="movies.length">
-        <div class="col-md">
-          <b-badge
-            pill
-            variant="primary"
-            v-if="movies.length"
-          >
-          <!--computed- number of selected movies -->
-            Selected: {{ selectedMoviesCounter }}
-          </b-badge>
+        <div class="pt-3">
+            <div class="row mb-2" v-if="movies.length">
+                <div class="col-md">
+                    <b-badge pill variant="primary" v-if="movies.length">
+                        <!--computed- number of selected movies -->
+                        Selected: {{ selectedMoviesCounter }}
+                    </b-badge>
+                </div>
+
+                <!-- buttons div -->
+                <div class="col-md">
+                    <!-- deselect button -->
+                    <b-button size="sm" variant="warning" class="float-right" @click="deselectAll">
+                        Deselect All
+                    </b-button>
+                    <!-- select button -->
+                    <b-button size="sm" variant="primary" class="float-right mr-1" @click="selectAll">
+                        Select All
+                    </b-button>
+                    <!-- dropdown with options -->
+                    <b-dropdown class="float-right mr-1" size="sm" text="Sort By">
+                        <!-- by title -->
+                        <b-dropdown-item @click="sortBy('title', 'asc')">
+                            Name ASC
+                        </b-dropdown-item>
+                        <b-dropdown-item @click="sortBy('title', 'desc')">
+                            Name DESC
+                        </b-dropdown-item>
+                        <b-dropdown-divider></b-dropdown-divider>
+                        <!-- by duration-->
+                        <b-dropdown-item @click="sortBy('duration', 'asc')">
+                            Duration ASC
+                        </b-dropdown-item>
+                        <b-dropdown-item @click="sortBy('duration', 'desc')">
+                            Duration DESC
+                        </b-dropdown-item>
+                    </b-dropdown>
+                    <!-- end dropdown -->
+                </div>
+                <!-- end buttons div -->
+            </div>
+
+            <movie-row v-for="movie in visibleCollectionOfMovies" :key="movie.id" :movie="movie" @on-selected-movie="onSelectedMovie"
+                :selectedMoviesIds="selectedMoviesIds" />
+            <MoviePaginator :number-of-pages="totalNumberOfPages" :current-page="currentPage" @selected-page="changeCurrentPage" />
+            <b-alert show variant="warning" v-if="!movies.length">
+                No Movies
+            </b-alert>
         </div>
-       
-       <!-- buttons div -->
-        <div class="col-md">
-             <!-- deselect button -->
-          <b-button
-            size="sm"
-            variant="warning"
-            class="float-right"
-            @click="deselectAll"
-          >
-            Deselect All
-          </b-button>
- <!-- select button -->
-          <b-button
-            size="sm"
-            variant="primary"
-            class="float-right mr-1"
-            @click="selectAll"
-          >
-              Select All
-          </b-button>
-          <!-- dropdown with options -->
-           <b-dropdown
-            class="float-right mr-1"
-            size="sm"
-            text="Sort By"
-          >
-          <!-- by title -->
-            <b-dropdown-item
-              @click="sortBy('title', 'asc')"
-            >
-              Name ASC
-            </b-dropdown-item>
-            <b-dropdown-item
-              @click="sortBy('title', 'desc')"
-            >
-              Name DESC
-            </b-dropdown-item>
-            <b-dropdown-divider></b-dropdown-divider>
-            <!-- by duration-->
-            <b-dropdown-item
-              @click="sortBy('duration', 'asc')"
-            >
-              Duration ASC
-            </b-dropdown-item>
-            <b-dropdown-item
-              @click="sortBy('duration', 'desc')"
-            >
-              Duration DESC
-            </b-dropdown-item>
-</b-dropdown>
-<!-- end dropdown -->
-        </div>
-        <!-- end buttons div -->
-</div>
 
-      <movie-row
-        v-for="movie in visibleCollectionOfMovies"
-        :key="movie.id"
-        :movie="movie"
-        @on-selected-movie="onSelectedMovie"
-         :selectedMoviesIds="selectedMoviesIds"
-      />
- <MoviePaginator
- :number-of-pages="totalNumberOfPages"
-  :current-page="currentPage"
-   @selected-page="changeCurrentPage"/>
-      <b-alert
-        show
-        variant="warning"
-        v-if="!movies.length"
-      >
-        No Movies
-      </b-alert>
     </div>
-    
-  </div>
 </template>
 
 <script>
- import MoviesService from './../services/MoviesService'
+    import MoviesService from './../services/MoviesService'
 
-import MovieRow from "./../components/MovieRow.vue"
-import MovieSearch from './../components/MovieSearch.vue'
-import MoviePaginator from './../components/MoviePaginator.vue'
+    import MovieRow from "./../components/MovieRow.vue"
+    import MovieSearch from './../components/MovieSearch.vue'
+    import MoviePaginator from './../components/MoviePaginator.vue'
+    import {
+        mapGetters,
+        mapActions
+    } from 'vuex'
+    export default {
+        name: "AppMovies",
+        components: {
+            MovieRow,
+            MovieSearch,
+            MoviePaginator
+        },
+        data() {
+            return {
+                // movies:[],
+                selectedMoviesIds: [],
+                currentPage: 1
+            }
+        },
+        computed: {
+            ...mapGetters({
+                currentTerm: 'getSearchTerm',
+                movies: 'getMovies'
+            }),
+            selectedMoviesCounter() {
+                return this.selectedMoviesIds.length
+            },
+            //  moviePaginator
+            totalNumberOfPages() {
+                return Math.ceil(this.movies.length / 5)
+            },
+            // show 5 movies on page moviePaginator
+            visibleCollectionOfMovies() {
+                let bottomIndexLimit = (this.currentPage - 1) * 5
+                let topIndexLimit = bottomIndexLimit + 5
+                return this.movies.filter(
+                    (movie, index) => index >= bottomIndexLimit && index < topIndexLimit)
+            }
+        },
+        methods: {
 
-export default {
-name:"AppMovies",
-components:{
-    MovieRow,
-    MovieSearch,
-    MoviePaginator
-},
-data(){
-    return{
-        movies:[],
-        selectedMoviesIds: [],
-        currentPage:1
+            ...mapActions([
+                'fetchMovies'
+            ]),
+            onSearchTermChanged(term) {
+                MoviesService.get(term)
+                    .then(({
+                        data
+                    }) => {
+                        this.movies = data
+                    })
+            },
+            // method for select and deselect single movie-row
+            onSelectedMovie(movie, isSelected) {
+                if (!isSelected) {
+                    let movieIndex = this.selectedMoviesIds.indexOf(movie.id);
+                    this.selectedMoviesIds.splice(movieIndex, 1);
+                    return;
+                }
+                this.selectedMoviesIds.push(movie.id)
+            },
+
+            selectAll() {
+                this.selectedMoviesIds = this.movies.map((movie) => movie.id);
+            },
+            deselectAll() {
+                this.selectedMoviesIds = [];
+            },
+            sortBy(prop, order) {
+                let orderCoefficient = order === 'asc' ? 1 : -1;
+                this.movies = this.movies.sort((movie1, movie2) => {
+                    return movie1[prop] >= movie2[prop] ?
+                        orderCoefficient : -orderCoefficient
+                })
+            },
+            // MoviePaginator method // at click
+            changeCurrentPage(page) {
+                this.currentPage = page;
+            }
+        },
+
+
+
+        beforeRouteEnter(to, from, next) {
+            // MoviesService.getAll()
+            // .then(({ data }) => {
+            //   next((context) => {
+            //     context.movies = data.map(movie =>
+            //       Object.assign(movie, { duration: parseFloat(movie.duration) }));
+            //   })
+            // })
+            next()
+        },
+        created() {
+            this.fetchMovies();
+
+        }
     }
-},
-computed:{
-selectedMoviesCounter(){
-     return this.selectedMoviesIds.length
-},
-//  moviePaginator
-totalNumberOfPages() {
-    return Math.ceil(this.movies.length / 5)
-},
-// show 5 movies on page moviePaginator
-visibleCollectionOfMovies() {
- let bottomIndexLimit = (this.currentPage - 1) * 5 
-let topIndexLimit = bottomIndexLimit + 5
- return this.movies.filter(
-     (movie, index) => index >= bottomIndexLimit && index < topIndexLimit)
-}
-},
-methods:{
-     onSearchTermChanged(term) {
-      MoviesService.get(term)
-        .then(({ data }) => {
-          this.movies = data
-        })
-    },
-    // method for select and deselect single movie-row
-      onSelectedMovie(movie, isSelected) {
-      if (!isSelected) {
-        let movieIndex = this.selectedMoviesIds.indexOf(movie.id);
-        this.selectedMoviesIds.splice(movieIndex, 1);
-        return;
-      }
-      this.selectedMoviesIds.push(movie.id)
-    },
-
-    selectAll(){
-this.selectedMoviesIds = this.movies.map((movie) => movie.id);
-    },
-    deselectAll(){
-       this.selectedMoviesIds = []; 
-    },
-    sortBy(prop, order) {
-      let orderCoefficient = order === 'asc' ? 1 : -1;
-      this.movies = this.movies.sort((movie1, movie2) => {
-        return movie1[prop] >= movie2[prop] ?
-          orderCoefficient : -orderCoefficient
-      })
-    },
-    // MoviePaginator method
-    changeCurrentPage(page) {
-        this.currentPage = page;
-    }
-},
-
-
-
- beforeRouteEnter(to, from, next) {
-    MoviesService.getAll()
-    .then(({ data }) => {
-      next((context) => {
-        context.movies = data.map(movie =>
-          Object.assign(movie, { duration: parseFloat(movie.duration) }));
-      })
-    })
-  }
-}
 </script>
 
 <style>
-
 </style>
