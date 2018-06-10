@@ -5,6 +5,7 @@ import AppMovies from '../pages/AppMovies'
 import AddMovie from '../pages/AddMovie'
 import AppLogin from '../pages/AppLogin'
 import AppRegister from '../pages/AppRegister'
+import AppSingleMovie from '../pages/AppSingleMovie'
 
 Vue.use(VueRouter)
 
@@ -17,6 +18,12 @@ const routes = [{
     path: '/movies',
     component: AppMovies,
     name: 'movies'
+    
+},
+{
+    path: '/movies/:id',
+    component: AppSingleMovie,
+    name: 'single-movie'
     
 },
 {

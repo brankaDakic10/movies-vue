@@ -20,6 +20,9 @@ export default {
   },
   add (movie) {
     return axios.post(ENDPOINTS.MOVIES, movie)
+  },
+  getMovie(id){
+    return axios.get(`/movies/${id}`)
   }
  
 }
