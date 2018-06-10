@@ -11,6 +11,9 @@
     <movie-search @search-term-change="setSearchTerm" class="ml-auto" />
  <div class="navbar-nav">
      <!--  -->
+       <router-link class="nav-item nav-link" :to="{name: 'login'}" v-if="!isAuthenticated">Login</router-link>
+<a href="#" class="nav-item nav-link" @click="logout" v-if="isAuthenticated">LogOut</a>
+
                 </div>
             </div>
         </nav>
@@ -18,9 +21,12 @@
 </template>
 
 <script>
+// added authService for login-logout
+ import {
+        authService
+    } from './../services/AuthService'
     import MovieSearch from './MovieSearch.vue'
-  import {
-        mapMutations} from 'vuex'
+ import { mapMutations, mapGetters } from "vuex";
     export default {
         name: "NavBar",
         components:{
@@ -28,10 +34,25 @@
         },
         methods: {
             ...mapMutations([
-                'setSearchTerm'
-            ])
-        }
+                'setSearchTerm',
+                'setIsAuthenticated'
+            ]),
+
+         logout() {
+      authService.logout();
+      this.setIsAuthenticated(false);
     }
+        },
+        
+  computed: {
+    ...mapGetters({
+      getAuthent: "getIsAuthenticated"
+    }),
+   isAuthenticated() {
+      return this.getAuthent;
+    }
+  }
+};
 </script>
 
 <style scoped>

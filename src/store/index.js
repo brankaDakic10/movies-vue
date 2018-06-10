@@ -7,7 +7,8 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state:{
     movies: [],
-    searchTerm: ''
+    searchTerm: '',
+    isAuthenticated: false
   },
   getters:{
     getMovies(state) {
@@ -15,7 +16,10 @@ export const store = new Vuex.Store({
       },
       getSearchTerm(state) {
         return state.searchTerm
-      }
+      },
+      getIsAuthenticated(state){
+        return state.isAuthenticated;
+  }
   },
   mutations:{
     setMovies(state, movies) {
@@ -24,6 +28,9 @@ export const store = new Vuex.Store({
       setSearchTerm(state, searchTerm) {
         state.searchTerm = searchTerm
       },
+      setIsAuthenticated(state, auth){
+        state.isAuthenticated = auth;
+  }
   },
   actions:{
   //   async fetchMovies(store) {
