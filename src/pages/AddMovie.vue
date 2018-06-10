@@ -7,28 +7,39 @@
             <b-form-group label="Movie Title:">
                 <b-form-input type="text" v-model="movieForm.title" placeholder="Enter title">
                 </b-form-input>
+                 <div class="alert alert-danger" role="alert" v-if="errors.title">
+          {{ errors.title[0] }}
+        </div>
                
             </b-form-group>
             <b-form-group label="Director:">
                 <b-form-input type="text" v-model="movieForm.director" placeholder="Enter director">
                 </b-form-input>
-                
+                 <div class="alert alert-danger" role="alert" v-if="errors.director">
+          {{ errors.director[0] }}
+        </div>
             </b-form-group>
             <b-form-group label="ImageUrl:">
                 <b-form-input type="text" v-model="movieForm.imageUrl" placeholder="Enter imageUrl">
                 </b-form-input>
-              
+              <div class="alert alert-danger" role="alert" v-if="errors.imageUrl">
+          {{ errors.imageUrl[0] }}
+        </div>
             </b-form-group>
             <b-form-group label="Duration:">
                 <b-form-input type="text" v-model="movieForm.duration" placeholder="Enter duration">
                 </b-form-input>
-               
+               <div class="alert alert-danger" role="alert" v-if="errors.duration">
+          {{ errors.duration[0] }}
+        </div>
             </b-form-group>
             <b-form-group label=" Release Date:">
                 <b-form-input type="text" v-model="movieForm.releaseDate" placeholder="Enter releaseDate">
                 </b-form-input>
                
-
+<div class="alert alert-danger" role="alert" v-if="errors.releaseDate">
+          {{ errors.releaseDate[0] }}
+        </div>
             </b-form-group>
 
             <b-form-group label="Genre:">
@@ -36,7 +47,7 @@
                 </b-form-input>
             </b-form-group>
 
-
+           
 
              <b-button type="reset" variant="danger">Reset</b-button> 
 
@@ -62,18 +73,21 @@ export default {
                     duration: "",
                     releaseDate: "",
                     genre: ""
-                }
+                },
+               errors: {}
       }
       
   },
   methods:{
       storeMovie(){
-          MoviesService.store(this.movieForm)
-           .then((success) => {
+        //   console.log("service ", MoviesService)
+          MoviesService.add(this.movieForm)
+           .then(() => {
+               this.errors = {}
                   this.redirectToHome()
-                    }).catch(errors => {
-
-                        this.errors = errors.response.data
+                    }).catch(err => {
+          //console.log("err ", err.response.data)
+            this.errors = err.response.data;
                     })
           
       },

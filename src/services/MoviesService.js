@@ -18,7 +18,7 @@ export default {
       }
     })
   },
-  store: function (movie) {
+  add (movie) {
     return axios.post(ENDPOINTS.MOVIES, movie)
   }
  
