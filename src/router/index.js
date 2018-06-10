@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 import AppMovies from '../pages/AppMovies'
 import AddMovie from '../pages/AddMovie'
 import AppLogin from '../pages/AppLogin'
-
+import AppRegister from '../pages/AppRegister'
 
 Vue.use(VueRouter)
 
@@ -29,6 +29,12 @@ const routes = [{
     path: '/login',
     component: AppLogin,
     name: 'login'
+    
+},
+{
+    path: '/register',
+    component: AppRegister,
+    name: 'register'
     
 }]
 

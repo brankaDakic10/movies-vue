@@ -98,6 +98,7 @@
             },
             resetForm() {
                 this.movieForm = {}
+                 this.errors={}
             }
 
         }

@@ -13,6 +13,7 @@
                     <!--  -->
                     <router-link class="nav-item nav-link" :to="{name: 'login'}" v-if="!isAuthenticated">Login</router-link>
                     <a href="#" class="nav-item nav-link" @click="logout" v-if="isAuthenticated">LogOut</a>
+                    <router-link class="nav-item nav-link" v-if="!isAuthenticated" :to="{name: 'register'}">Register</router-link>
 
                 </div>
             </div>

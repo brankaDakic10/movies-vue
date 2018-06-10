@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h4>Login please</h4>
+        <h4 class="text-center">Login please</h4>
         <form @submit.prevent="onSubmit" class="jumbotron">
 
             <div class="form-group row">
@@ -30,7 +30,7 @@
                     </div>
 
 
-                    <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+                    <button name="submit" type="submit" class="btn btn-primary">Login</button>
                 </div>
             </div>
         </form>
